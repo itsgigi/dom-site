@@ -5,7 +5,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative flex min-h-screen flex-col items-center bg-ivory px-6 pb-24"
+      className="relative flex min-h-screen flex-col items-center bg-ivory px-6 pb-46 sm:pb-62 xl:pb-24"
     >
       <div className="h-100 w-2 bg-sky absolute sm:h-100 sm:w-2.5" />
 

@@ -15,8 +15,8 @@ export function SpotCard({
 }) {
   return (
     <div
-      className={`rounded-2xl bg-ivory p-2 shadow-[0_18px_40px_-12px_rgba(30,23,21,0.35)] ${
-        compact ? 'w-36' : 'w-44 sm:w-56'
+      className={`rounded-2xl bg-ivory shadow-[0_18px_40px_-12px_rgba(30,23,21,0.35)] ${
+        compact ? 'w-24 p-1.5 md:w-36 md:p-2' : 'w-44 p-2 sm:w-56'
       } ${className}`}
       style={style}
     >
@@ -27,7 +27,7 @@ export function SpotCard({
         draggable={false}
       />
       <div className="px-1.5 pb-1.5 pt-2.5">
-        <p className="font-kopiku text-lg uppercase leading-none text-merlot sm:text-xl">
+        <p className={`font-kopiku uppercase leading-none text-merlot ${compact ? 'text-sm md:text-xl' : 'text-lg sm:text-xl'}`}>
           {spot.name}
         </p>
         {!compact && (

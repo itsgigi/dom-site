@@ -548,7 +548,12 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
           fig.style.pointerEvents = built > 0.8 ? 'auto' : 'none'
           buildFigure(i, fig, built)
           // card beside the model's right flank (the card sits 40px right of this point)
-          figTop = { x: fx + hl.card[0] * k - 40, y: fy + hl.card[1] * k }
+          // phones: the card sits above the model, centred on it, instead of beside it
+          const cardW = (cardRef.current?.firstElementChild as HTMLElement | null)?.offsetWidth ?? 0
+          figTop =
+            canvas!.clientWidth < 768
+              ? { x: s.x - 40 - cardW / 2, y: fy + 20 * k }
+              : { x: fx + hl.card[0] * k - 40, y: fy + hl.card[1] * k }
         }
         if (i === activeRef.current && cardRef.current) {
           const top = figTop ?? toScreen(sc.x, sc.top * sc.progress.value * 0.6, sc.z)

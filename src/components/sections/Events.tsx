@@ -51,7 +51,7 @@ export default function Events() {
   return (
     <section
       id="events"
-      className="relative flex min-h-screen flex-col items-center bg-ivory px-6 pb-24 pt-10"
+      className="relative flex min-h-screen flex-col items-center bg-ivory px-6 pb-46 pt-10 sm:pb-62 xl:pb-24"
     >
       <div className="absolute h-100 w-2 bg-sky sm:w-2.5 -mt-20" />
 
