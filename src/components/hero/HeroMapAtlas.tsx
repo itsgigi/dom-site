@@ -61,6 +61,10 @@ export default function HeroMapAtlas() {
               style={{ width: 'clamp(11rem, 21vw, 19rem)', translate: '1.5% -5%' }}
             />
           </h1>
+          {/* below lg the corner blurb has no room, so it rides in the panel */}
+          <p className="mt-2 text-center text-sm font-bold uppercase tracking-widest text-merlot lg:hidden">
+            Discover and live the city
+          </p>
         </div>
         <div
           className="hidden h-24 flex-1 rounded-tr-4xl border-r-10 border-t-10 border-sky lg:block"

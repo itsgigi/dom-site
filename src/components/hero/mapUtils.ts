@@ -34,6 +34,8 @@ const RAW_SPOTS = [
   { id: 'prada', name: 'Porta Romana', lat: 45.4446, lon: 9.2043, img: photo2, blurb: 'Art at Fondazione Prada, then a coffee at Bar Luce.' },
   { id: 'navigli', name: 'Navigli', lat: 45.452, lon: 9.1745, img: photoPizza, blurb: 'Canals, sunsets and the longest aperitivo in the city.' },
   { id: 'sempione', name: 'Sempione', lat: 45.4757, lon: 9.1724, img: photoAli, blurb: 'Picnic in the park, then a spritz under the Arco della Pace.' },
+  { id: 'monumentale', name: 'Monumentale', lat: 45.4856, lon: 9.1795, img: photo2, blurb: 'An open-air museum of sculpture. Quiet, strange and beautiful.' },
+  { id: 'sansiro', name: 'San Siro', lat: 45.4781, lon: 9.124, img: photo1, blurb: 'Football’s cathedral. Come for a derby, stay for the spiral towers.' },
 ]
 
 export const SPOTS: Spot[] = RAW_SPOTS.map(({ lat, lon, ...rest }) => {

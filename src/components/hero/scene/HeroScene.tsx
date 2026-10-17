@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type CSSProperties } from 'react'
 import {
   BufferAttribute,
   BufferGeometry,
@@ -21,7 +21,19 @@ import {
 import { MAJOR, MID, MINOR, RAIL, WATER } from '../../../data/milanMap'
 import { SpotCard } from '../MapParts'
 import { BRAND, SPOTS, prefersReducedMotion } from '../mapUtils'
-import { PAINTS, buildLandmark, type Paint } from './landmarks'
+import breraFigure from '../hairline/brera.js'
+import duomoFigure from '../hairline/duomo.js'
+import isolaFigure from '../hairline/isola.js'
+import monumentaleFigure from '../hairline/monumentale.js'
+import navigliFigure from '../hairline/navigli.js'
+import noloFigure from '../hairline/nolo.js'
+import pradaFigure from '../hairline/prada.js'
+import sansiroFigure from '../hairline/sansiro.js'
+import sempioneFigure from '../hairline/sempione.js'
+import veneziaFigure from '../hairline/venezia.js'
+import type { HairlineFigure } from '../hairline/figure'
+import { mountHairline } from '../hairline/mountHairline'
+import { PAINTS, buildLandmark, type LandmarkLines, type Paint } from './landmarks'
 import { buildStreetLayer, toWorld } from './streets'
 
 // Hero map as a real 3D scene. Streets are thin lines on the ground with
@@ -46,7 +58,33 @@ const CURRENT_RADIUS = 260 // map units around a spot that the current runs thro
 const BUILD_MS = 3000
 const UNBUILD_MS = 900
 const VIEW_WIDTH = 1500 // map units that should span the viewport width
-const MAX_SPOTS = 8
+// view centre east–west: pulled west so San Siro, at the map's west edge, fits
+const VIEW_X = -140
+const MAX_SPOTS = 10
+
+// Spots drawn as a Hairline figure (an isometric SVG floating over the pin)
+// instead of a 3D sculpture. `anchor` is where the pin's ground point sits in
+// the figure's 400 × 320 viewBox, `card` the viewBox point the card's bottom-left
+// hangs from, and
+// `radius` the ground patch that pulses under it (map units).
+const HAIRLINE: Record<string, { figure: HairlineFigure; anchor: [number, number]; card: [number, number]; radius: number }> = {
+  duomo: { figure: duomoFigure, anchor: [206, 210], card: [292, 200], radius: 130 },
+  brera: { figure: breraFigure, anchor: [200, 184], card: [286, 164], radius: 110 },
+  isola: { figure: isolaFigure, anchor: [200, 245], card: [248, 202], radius: 90 },
+  nolo: { figure: noloFigure, anchor: [200, 163], card: [290, 170], radius: 120 },
+  venezia: { figure: veneziaFigure, anchor: [194, 163], card: [265, 120], radius: 120 },
+  prada: { figure: pradaFigure, anchor: [200, 211], card: [279, 182], radius: 110 },
+  navigli: { figure: navigliFigure, anchor: [192, 175], card: [303, 194], radius: 140 },
+  sempione: { figure: sempioneFigure, anchor: [200, 269], card: [259, 198], radius: 100 },
+  monumentale: { figure: monumentaleFigure, anchor: [197, 185], card: [290, 163], radius: 110 },
+  sansiro: { figure: sansiroFigure, anchor: [200, 166], card: [337, 152], radius: 140 },
+}
+const EMPTY_LANDMARK: LandmarkLines = {
+  ground: new Float32Array(),
+  height: new Float32Array(),
+  faces: { ivory: new Float32Array(), sky: new Float32Array(), merlot: new Float32Array(), night: new Float32Array() },
+  top: 0,
+}
 
 const PAINT_COLORS: Record<Paint, string> = {
   ivory: BRAND.ivory,
@@ -78,7 +116,7 @@ void main() {
   vSeed = aSeed;
   vPos = position.xz;
   // soft circular edge so the city fades into the page
-  vFade = 1.0 - smoothstep(480.0, 760.0, length(position.xz));
+  vFade = 1.0 - smoothstep(480.0, 760.0, length(position.xz - vec2(${VIEW_X.toFixed(1)}, 0.0)));
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   gl_Position.xy += uOffset / uResolution * 2.0 * gl_Position.w;
 }`
@@ -192,6 +230,7 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const pinRefs = useRef<(HTMLDivElement | null)[]>([])
   const cardRef = useRef<HTMLDivElement>(null)
+  const figRefs = useRef<(HTMLDivElement | null)[]>([])
   const activeRef = useRef(active)
   const onLandedRef = useRef(onLanded)
 
@@ -273,7 +312,8 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
     const sculptures = SPOTS.slice(0, MAX_SPOTS).map((spot, s) => {
       const [wx, wz] = toWorld(spot.x, spot.y)
       spotUniforms[s].set(wx, wz, 0, 0)
-      const lm = buildLandmark(spot.id)
+      const lm = HAIRLINE[spot.id] ? EMPTY_LANDMARK : buildLandmark(spot.id)
+      if (HAIRLINE[spot.id]) spotRadius[s] = HAIRLINE[spot.id].radius
       // footprint reach on the ground, for the light patch under the building
       for (let k = 0; k < lm.ground.length; k += 3) {
         spotRadius[s] = Math.max(spotRadius[s], Math.hypot(lm.ground[k], lm.ground[k + 2]))
@@ -353,8 +393,9 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
     })
 
     // --- camera
-    const target = new Vector3(0, 40, 95)
+    const target = new Vector3(VIEW_X, 40, 95)
     let distance = 1500
+    let tilt = TILT
     const resize = () => {
       const w = root.clientWidth
       const h = root.clientHeight
@@ -363,7 +404,12 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
       camera.aspect = w / h
       camera.updateProjectionMatrix()
       const halfTan = Math.tan(((FOV / 2) * Math.PI) / 180)
-      distance = Math.min(2600, VIEW_WIDTH / 2 / (halfTan * camera.aspect))
+      // portrait: fit the whole spread of spots (San Siro → NoLo) across the
+      // width, and push the view south so the map sits above the logo panel
+      const portrait = camera.aspect < 0.8
+      distance = Math.min(portrait ? 6000 : 2600, (portrait ? 1150 : VIEW_WIDTH) / 2 / (halfTan * camera.aspect))
+      target.set(portrait ? -270 : VIEW_X, 40, portrait ? 330 : 95)
+      tilt = portrait ? 62 : TILT // look down more on phones, so the city keeps some height
     }
     const ro = new ResizeObserver(resize)
     ro.observe(root)
@@ -395,6 +441,47 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
       return { x: ((v.x + 1) / 2) * root.clientWidth, y: ((1 - v.y) / 2) * root.clientHeight, ok: v.z < 1 }
     }
 
+    // Progressive construction of a Hairline figure: every stroke draws itself
+    // on (dash offset 1 → 0), lowest first, and each plate fills in right after
+    // its outline, so the drawing rises like the 3D sculptures. Runs backwards
+    // when the figure goes away; at rest (fully built) the inline styles go.
+    type Stroke = { el: SVGGeometryElement; d: number; dot: boolean }
+    const strokes: (Stroke[] | null)[] = []
+    const lastBuilt: number[] = []
+    const buildFigure = (i: number, fig: HTMLElement, built: number) => {
+      if (built === lastBuilt[i]) return
+      lastBuilt[i] = built
+      let list = strokes[i]
+      if (!list) {
+        const els = [...fig.querySelectorAll<SVGGeometryElement>('path, polygon, line, ellipse, circle')]
+        const bottoms = els.map((el) => {
+          const b = el.getBBox()
+          return b.y + b.height
+        })
+        const lo = Math.min(...bottoms)
+        const hi = Math.max(...bottoms)
+        list = els.map((el, n) => ({ el, d: (hi - bottoms[n]) / Math.max(1, hi - lo), dot: el.tagName === 'ellipse' || el.tagName === 'circle' }))
+        list.forEach(({ el, dot }) => !dot && el.setAttribute('pathLength', '1'))
+        strokes[i] = list
+      }
+      for (const { el, d, dot } of list) {
+        const st = el.style
+        if (built >= 1) {
+          st.strokeDasharray = st.strokeDashoffset = st.fillOpacity = st.opacity = ''
+          continue
+        }
+        const t = Math.max(0, Math.min(1, (built - d * 0.65) / 0.35))
+        const e = t * t * (3 - 2 * t)
+        if (dot) {
+          st.opacity = String(e)
+          continue
+        }
+        st.strokeDasharray = '1'
+        st.strokeDashoffset = String(1 - e)
+        st.fillOpacity = String(Math.max(0, (e - 0.5) * 2))
+      }
+    }
+
     function frame(now: number) {
       raf = 0
       if (!onScreen) return
@@ -411,7 +498,7 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
       }
       lean.x += (lean.tx - lean.x) * 0.05
       lean.y += (lean.ty - lean.y) * 0.05
-      const elev = ((88 + (TILT - 88) * e - lean.y * 4) * Math.PI) / 180
+      const elev = ((88 + (tilt - 88) * e - lean.y * 4) * Math.PI) / 180
       const azim = (lean.x * 7 * Math.PI) / 180
       camera.position.set(
         target.x + distance * Math.sin(azim) * Math.cos(elev),
@@ -447,8 +534,24 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
         const s = toScreen(sc.x, 0, sc.z)
         pin.style.transform = `translate3d(${s.x}px, ${s.y}px, 0)`
         pin.style.visibility = s.ok ? '' : 'hidden'
+        // Hairline figure: appears once the current has arrived, anchored on the pin
+        const hl = HAIRLINE[SPOTS[i].id]
+        const fig = figRefs.current[i]
+        let figTop: { x: number; y: number } | null = null
+        if (hl && fig) {
+          const built = Math.max(0, Math.min(1, (sc.progress.value - RISE_START) / (1 - RISE_START)))
+          const k = fig.offsetWidth / 400
+          const fx = s.x - hl.anchor[0] * k
+          const fy = s.y - hl.anchor[1] * k
+          fig.style.transform = `translate3d(${fx}px, ${fy}px, 0)`
+          fig.style.visibility = built > 0 ? '' : 'hidden'
+          fig.style.pointerEvents = built > 0.8 ? 'auto' : 'none'
+          buildFigure(i, fig, built)
+          // card beside the model's right flank (the card sits 40px right of this point)
+          figTop = { x: fx + hl.card[0] * k - 40, y: fy + hl.card[1] * k }
+        }
         if (i === activeRef.current && cardRef.current) {
-          const top = toScreen(sc.x, sc.top * sc.progress.value * 0.6, sc.z)
+          const top = figTop ?? toScreen(sc.x, sc.top * sc.progress.value * 0.6, sc.z)
           // card hangs up-right of this point; keep all of it on screen
           const card = cardRef.current.firstElementChild as HTMLElement | null
           const cw = (card?.offsetWidth ?? 0) + 40
@@ -471,6 +574,16 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
       disposables.forEach((d) => d.dispose())
       renderer.dispose()
     }
+  }, [])
+
+  // mount the Hairline figures once; they sleep while settled or offscreen
+  useEffect(() => {
+    const teardown = SPOTS.slice(0, MAX_SPOTS).map((spot, i) => {
+      const hl = HAIRLINE[spot.id]
+      const el = figRefs.current[i]
+      return hl && el ? mountHairline(el, hl.figure) : null
+    })
+    return () => teardown.forEach((t) => t?.())
   }, [])
 
   return (
@@ -500,18 +613,46 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
               style={{ transitionDelay: landed ? `${i * 90}ms` : '0ms' }}
             >
               <span
-                className={`rounded-full bg-ivory px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-merlot shadow-[0_4px_12px_-4px_rgba(30,23,21,0.3)] ring-1 ring-sky transition-opacity duration-300 ${
+                className={`hidden rounded-full bg-ivory px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-merlot md:inline shadow-[0_4px_12px_-4px_rgba(30,23,21,0.3)] ring-1 ring-sky transition-opacity duration-300 ${
                   on ? 'opacity-0' : 'opacity-100'
                 }`}
               >
                 {spot.name}
               </span>
-              <span className={`w-0.5 bg-merlot transition-opacity duration-300 ${on ? 'h-8 opacity-0' : 'h-8 opacity-100'}`} />
+              <span className={`hidden w-0.5 bg-merlot transition-opacity duration-300 md:block ${on ? 'h-8 opacity-0' : 'h-8 opacity-100'}`} />
               <span className="h-2.5 w-2.5 rounded-full bg-merlot ring-4 ring-merlot/15" />
             </button>
           </div>
         )
       })}
+
+      {SPOTS.slice(0, MAX_SPOTS).map((spot, i) =>
+        HAIRLINE[spot.id] ? (
+          <div
+            key={`fig-${spot.id}`}
+            ref={(el) => {
+              figRefs.current[i] = el
+            }}
+            onMouseEnter={() => onFocus(i)}
+            onMouseLeave={onBlur}
+            className="absolute left-0 top-0 w-[min(380px,max(34vw,190px))]"
+            style={
+              {
+                // inline: the kernel's unlayered `position: relative` beats Tailwind's layer
+                position: 'absolute',
+                visibility: 'hidden',
+                colorScheme: 'light',
+                // brand palette for the figure: ivory plates, night lines, merlot accent
+                '--hairline-plate': BRAND.ivory,
+                '--hairline-hi': BRAND.merlot,
+                '--hairline-edge': 'rgba(30, 23, 21, 0.62)',
+                '--hairline-mid': 'rgba(30, 23, 21, 0.38)',
+                '--hairline-lo': 'rgba(30, 23, 21, 0.16)',
+              } as CSSProperties
+            }
+          />
+        ) : null,
+      )}
 
       <div ref={cardRef} className="absolute left-0 top-0 z-10">
         {active !== null && (
