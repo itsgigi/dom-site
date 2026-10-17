@@ -55,11 +55,11 @@ export default function Events() {
     >
       <div className="absolute h-100 w-2 bg-sky sm:w-2.5 -mt-20" />
 
-      <div className="flex flex-1 flex-col items-center justify-center mb-16 lg:mb-0">
+      <div className="flex flex-1 flex-col items-center justify-center mb-16 xl:mb-0">
         {/* photo matches the text card's height on desktop */}
-        <div className="flex flex-col items-center gap-10 md:flex-row-reverse md:items-stretch md:gap-22">
+        <div className="flex flex-col items-center gap-10 xl:flex-row-reverse xl:items-stretch xl:gap-22">
         <div
-          className="relative z-10 h-64 w-64 shrink-0 self-center sm:h-130 sm:w-130 md:h-auto md:self-stretch"
+          className="relative z-10 h-64 w-64 shrink-0 self-center sm:h-130 sm:w-130 xl:h-auto xl:self-stretch"
           role="region"
           aria-roledescription="carousel"
           aria-label="Photos from Nights of Milan"
@@ -105,7 +105,7 @@ export default function Events() {
           </div>
         </div>
 
-        <div className="relative flex max-w-2xl flex-col items-center justify-center gap-6 rounded-4xl bg-sky p-8 text-center sm:p-12 md:items-start md:text-left">
+        <div className="relative flex max-w-2xl flex-col items-center justify-center gap-6 rounded-4xl bg-sky p-8 text-center sm:p-12 xl:items-start xl:text-left">
           <p className="font-helvetica text-sm font-bold uppercase tracking-[0.2em] text-merlot">
             Events
           </p>
@@ -135,7 +135,7 @@ export default function Events() {
 
           <svg
             viewBox="250 10 250 400"
-            className="absolute right-0 top-full h-72 w-40 -translate-y-10 -translate-x-21 -scale-x-100 sm:h-96 sm:w-56 md:translate-x-35"
+            className="absolute right-0 top-full h-72 w-40 -translate-y-10 -translate-x-21 -scale-x-100 sm:h-96 sm:w-56 xl:translate-x-35"
             fill="none"
             aria-hidden="true"
           >

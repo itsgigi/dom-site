@@ -9,7 +9,7 @@ export default function About() {
     >
       <div className="h-100 w-2 bg-sky absolute sm:h-100 sm:w-2.5" />
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-10 md:flex-row md:gap-22">
+      <div className="flex flex-1 flex-col items-center justify-center gap-10 xl:flex-row xl:gap-22">
         <div className="relative z-10 h-64 w-64 sm:h-130 sm:w-130">
           <img
             src={ali}
@@ -23,7 +23,7 @@ export default function About() {
             className="pointer-events-none absolute z-20 hidden xl:flex object-contain inset-0 sm:h-[calc(100%+16rem)] -translate-y-31"
           />
         </div>
-        <div className="relative flex max-w-2xl flex-col items-center gap-6 rounded-4xl bg-sky p-8 text-center sm:p-12 md:items-start md:text-left">
+        <div className="relative flex max-w-2xl flex-col items-center gap-6 rounded-4xl bg-sky p-8 text-center sm:p-12 xl:items-start xl:text-left">
           <p className="font-helvetica text-sm font-bold uppercase tracking-[0.2em] text-merlot">
             About Us
           </p>
@@ -40,7 +40,7 @@ export default function About() {
 
           <svg
             viewBox="250 10 250 400"
-            className="absolute top-full h-72 w-40 -translate-x-5 md:-translate-x-35 -translate-y-10 sm:h-96 sm:w-56"
+            className="absolute top-full h-72 w-40 -translate-x-5 xl:-translate-x-35 -translate-y-10 sm:h-96 sm:w-56"
             fill="none"
           >
             <path
