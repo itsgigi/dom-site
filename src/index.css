@@ -1,0 +1,93 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Kopiku';
+  src: url('./assets/fonts/Kopiku.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica';
+  src: url('./assets/fonts/Helvetica.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Helvetica';
+  src: url('./assets/fonts/Helvetica-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-kopiku: 'Kopiku', sans-serif;
+  --font-helvetica: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+
+  --color-sky: #bcd2e0;
+  --color-merlot: #840808;
+  --color-ivory: #faf7f0;
+  --color-night: #1e1715;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-ivory);
+  color: var(--color-night);
+  font-family: var(--font-helvetica);
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-30%);
+  }
+  to {
+    transform: translateX(130vw);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- map hero prototypes --- */
+
+@keyframes card-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
