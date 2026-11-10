@@ -1,11 +1,12 @@
-import TopLeftNav from '../TopLeftNav'
-import HeroMapAtlas from '../hero/HeroMapAtlas'
+// import HeroMapAtlas from '../hero/HeroMapAtlas'
+import HeroPhoto from '../hero/HeroPhoto'
 
 export default function Hero() {
   return (
     <section id="hero" className="relative">
-      <TopLeftNav />
-      <HeroMapAtlas />
+      {/* <HeroMapAtlas /> */}
+      {/* TopLeftNav now lives inside HeroPhoto's pinned frame */}
+      <HeroPhoto />
     </section>
   )
 }

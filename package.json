@@ -7,17 +7,20 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "blog:import": "node --env-file-if-exists=.env scripts/import-instagram.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "lenis": "^1.3.26",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-router": "^7.18.5",
     "tailwindcss": "^4.3.3",
     "three": "^0.180.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@eslint/js": "^10.0.1",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
@@ -30,6 +33,7 @@
     "globals": "^17.12.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.69.0",
-    "vite": "^8.3.0"
+    "vite": "^8.3.0",
+    "zod": "^4.6.7"
   }
 }

@@ -1,11 +1,8 @@
 import { useState, type FormEvent } from 'react'
+import SocialLinks from '../SocialLinks'
 
 const TO_ADDRESS = 'daysofmilan'
 
-const SOCIAL_LINKS = [
-  { href: 'https://instagram.com/daysofmilan', label: 'Instagram' },
-  { href: 'https://tiktok.com/@daysofmilan', label: 'TikTok' },
-]
 
 const AUDIENCES = ['A brand', 'A talent', 'An agency'] as const
 type Audience = (typeof AUDIENCES)[number]
@@ -66,19 +63,7 @@ export default function Contacts() {
             <p className="font-helvetica text-xs font-bold uppercase tracking-[0.15em] text-ivory/60">
               Follow along
             </p>
-            <div className="flex items-center gap-3">
-              {SOCIAL_LINKS.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border border-ivory/15 px-4 py-2 font-helvetica text-xs font-bold uppercase tracking-[0.15em] text-ivory/70 transition-colors hover:border-sky hover:text-sky"
-                >
-                  {social.label}
-                </a>
-              ))}
-            </div>
+            <SocialLinks />
           </div>
         </div>
 

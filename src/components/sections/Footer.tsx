@@ -1,16 +1,14 @@
 import logo from '../../assets/logo/Milan_Secondary.svg'
+import SiteLink from '../SiteLink'
+import SocialLinks from '../SocialLinks'
 
 const NAV_LINKS = [
   { href: '#home', label: 'Home' },
   { href: '#about', label: 'About' },
-  { href: '#mission', label: 'Mission' },
+  { href: '/blog', label: 'Blog' },
   { href: '#contacts', label: 'Contacts' },
 ]
 
-const SOCIAL_LINKS = [
-  { href: 'https://instagram.com/daysofmilan', label: 'Instagram' },
-  { href: 'https://tiktok.com/@daysofmilan', label: 'TikTok' },
-]
 
 const YEAR = new Date().getFullYear()
 
@@ -30,29 +28,17 @@ export default function Footer() {
 
             <nav className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:justify-end">
               {NAV_LINKS.map((link) => (
-                <a
+                <SiteLink
                   key={link.href}
                   href={link.href}
                   className="font-helvetica text-xs font-bold uppercase tracking-[0.15em] text-ivory/70 transition-colors hover:text-sky"
                 >
                   {link.label}
-                </a>
+                </SiteLink>
               ))}
             </nav>
 
-            <div className="flex items-center gap-3">
-              {SOCIAL_LINKS.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full border border-ivory/15 px-4 py-2 font-helvetica text-xs font-bold uppercase tracking-[0.15em] text-ivory/70 transition-colors hover:border-sky hover:text-sky"
-                >
-                  {social.label}
-                </a>
-              ))}
-            </div>
+            <SocialLinks />
           </div>
         </div>
 

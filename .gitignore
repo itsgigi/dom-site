@@ -26,3 +26,6 @@ dist-ssr
 # unused high-res originals (the site uses the JPGs in assets/guides and assets/hero)
 src/assets/1.png
 src/assets/2.png
+
+# secrets for scripts/import-instagram.ts
+.env

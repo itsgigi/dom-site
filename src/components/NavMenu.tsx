@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import logo from '../assets/logo/Milan_Primary.svg'
+import SiteLink from './SiteLink'
 
 const NAV_LINKS = [
   { href: '#home', label: 'Home' },
   { href: '#about', label: 'About' },
-  { href: '#mission', label: 'Mission' },
+  { href: '/blog', label: 'Blog' },
   { href: '#contacts', label: 'Contacts' },
 ]
 
@@ -66,13 +67,13 @@ export default function NavMenu() {
                 style={{ transitionDelay: open ? '350ms' : '0ms' }}
               >
                 {link ? (
-                  <a
+                  <SiteLink
                     href={link.href}
                     onClick={() => setOpen(false)}
                     className="font-kopiku text-4xl uppercase text-merlot transition-colors hover:text-night sm:text-5xl"
                   >
                     {link.label}
-                  </a>
+                  </SiteLink>
                 ) : (
                   <img src={logo} alt="Days of Milan" className="h-10 w-auto" />
                 )}

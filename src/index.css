@@ -91,3 +91,106 @@ body {
 }
 
 
+
+/* --- photo hero layers --- */
+
+@keyframes hero-scene-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* layers settle up by --rise; kept below the 40px apron so nothing opens */
+@keyframes hero-settle {
+  from {
+    transform: translateY(var(--rise, 0px));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-settle-sky {
+  from {
+    transform: scale(1.03);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* wind-blown mist: each row is a 200%-wide strip of soft streaks sliding by
+   exactly half (seamless), while its wrapper swells and bobs on its own beat */
+.hero-wisp {
+  width: 200%;
+  background-size: 25% 100%;
+  background-repeat: repeat-x;
+  animation: hero-wind var(--dur, 60s) linear infinite;
+}
+
+@keyframes hero-wind {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.hero-wisp-bob {
+  animation: hero-bob var(--bob, 7s) ease-in-out infinite alternate;
+}
+
+@keyframes hero-bob {
+  from {
+    transform: translateY(12%) scaleY(0.85);
+    filter: opacity(0.55);
+  }
+  to {
+    transform: translateY(-16%) scaleY(1.25);
+    filter: opacity(1);
+  }
+}
+
+/* a cloud's shadow sliding over the piazza */
+.hero-cloud-shadow {
+  background: radial-gradient(ellipse 50% 45% at 50% 50%, rgba(30, 23, 21, 0.3), rgba(30, 23, 21, 0) 70%);
+  mix-blend-mode: multiply;
+  animation: hero-cloud-shadow 26s -9s linear infinite;
+}
+
+@keyframes hero-cloud-shadow {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(260%);
+  }
+}
+
+/* "scroll to explore" cue: a short dash running along its track */
+.hero-scroll-cue {
+  animation: hero-scroll-cue 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes hero-scroll-cue {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-layer,
+  .hero-wisp,
+  .hero-wisp-bob,
+  .hero-cloud-shadow,
+  .hero-scroll-cue {
+    animation: none !important;
+  }
+}

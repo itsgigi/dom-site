@@ -1,0 +1,26 @@
+{
+  "slug": "18-things-to-do-in-milan-this-november",
+  "title": "18 things you can do this November in Milan",
+  "date": "2026-11-01",
+  "kicker": "November 2026",
+  "excerpt": "Wonderful exhibitions, panettone competitions, events to meet new people, Christmas and Thanksgiving: what to join in Milan this November.",
+  "intro": "Hello November! Wonderful exhibitions, panettone competitions, events to meet new people, Christmas and Thanksgiving: these are just some of the events you can join this November in Milan.",
+  "cover": "slide-01.webp",
+  "instagramUrl": "https://www.instagram.com/p/DfMbEuNEX5M/",
+  "items": [
+    {
+      "title": "Enjoy jazz concerts all over the city",
+      "description": "Join the JAZZMI festival, where iconic Milanese venues host unique concerts exploring the full spectrum of classic and contemporary jazz.",
+      "when": "Until 8 Nov",
+      "venue": null,
+      "image": "slide-02.webp"
+    },
+    {
+      "title": "Join the Panettone World Cup",
+      "description": "The best master pastry chefs from around the world will compete for the title of Panettone World Champion at Melià hotel.",
+      "when": "7 & 8 Nov",
+      "venue": "Melià hotel",
+      "image": "slide-03.webp"
+    }
+  ]
+}

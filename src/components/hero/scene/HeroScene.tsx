@@ -60,6 +60,10 @@ const UNBUILD_MS = 900
 const VIEW_WIDTH = 1500 // map units that should span the viewport width
 // view centre east–west: pulled west so San Siro, at the map's west edge, fits
 const VIEW_X = -140
+// extra westward look on wide screens (map units), see resize()
+const WIDE_SHIFT = 230
+// …and pull back a touch so the whole spread still fits beside the panel
+const WIDE_VIEW_WIDTH = 1750
 const MAX_SPOTS = 10
 
 // Spots drawn as a Hairline figure (an isometric SVG floating over the pin)
@@ -407,8 +411,11 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
       // portrait: fit the whole spread of spots (San Siro → NoLo) across the
       // width, and push the view south so the map sits above the logo panel
       const portrait = camera.aspect < 0.8
-      distance = Math.min(portrait ? 6000 : 2600, (portrait ? 1150 : VIEW_WIDTH) / 2 / (halfTan * camera.aspect))
-      target.set(portrait ? -270 : VIEW_X, 40, portrait ? 330 : 95)
+      // wide screens: the intro panel owns the left column, so slide the city
+      // east (look further west) to keep the spots clear of it
+      const wide = !portrait && w >= 1024
+      distance = Math.min(portrait ? 6000 : 2600, (portrait ? 1150 : wide ? WIDE_VIEW_WIDTH : VIEW_WIDTH) / 2 / (halfTan * camera.aspect))
+      target.set(portrait ? -270 : wide ? VIEW_X - WIDE_SHIFT : VIEW_X, 40, portrait ? 330 : 95)
       tilt = portrait ? 62 : TILT // look down more on phones, so the city keeps some height
     }
     const ro = new ResizeObserver(resize)
@@ -664,7 +671,6 @@ export default function HeroScene({ active, landed, onLanded, onFocus, onBlur }:
           <div key={active} className="absolute bottom-0 left-10">
             <SpotCard
               spot={SPOTS[active]}
-              compact
               style={{ animation: `card-pop 550ms ${BUILD_MS * 0.75}ms both cubic-bezier(0.34, 1.56, 0.64, 1)` }}
             />
           </div>
